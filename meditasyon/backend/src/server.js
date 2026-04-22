@@ -10,6 +10,7 @@ import { meRouter } from "./routes/me.js";
 import { moodsRouter } from "./routes/moods.js";
 import { sleepRouter } from "./routes/sleep.js";
 import { chatRouter } from "./routes/chat.js";
+import { eventsRouter } from "./routes/events.js";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use("/api", meRouter);
 app.use("/api/moods", moodsRouter);
 app.use("/api/sleep", sleepRouter);
 app.use("/api/chat", chatRouter);
+app.use("/api/events", eventsRouter);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, _req, res, _next) => {

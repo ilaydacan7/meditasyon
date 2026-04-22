@@ -145,6 +145,20 @@ async function fetchMe() {
   return json.user;
 }
 
+async function trackEvent(eventType, eventData = {}) {
+  const auth = loadAuth();
+  if (!auth?.accessToken && !auth?.refreshToken) return;
+  try {
+    await apiFetch("/events", {
+      method: "POST",
+      body: { eventType, eventData },
+      authRequired: true,
+    });
+  } catch {
+    // tracking should never block UX
+  }
+}
+
 function stopMeditationSession() {
   if (meditationIntervalId) window.clearInterval(meditationIntervalId);
   meditationIntervalId = null;
@@ -179,6 +193,10 @@ function startMeditationSession() {
   if (!activeMeditation || !modalBodyEl || !modalOkBtn) return;
 
   let remaining = Math.max(1, Math.round(activeMeditation.minutes * 60));
+  void trackEvent("meditation_started", {
+    title: activeMeditation.title || "Meditasyon",
+    minutes: activeMeditation.minutes,
+  });
   modalOkBtn.textContent = "Bitir";
 
   const safeVideo = activeMeditation.videoUrl
@@ -394,6 +412,7 @@ function openBreathModal() {
   if (!breathModalOverlay) return;
   closeNavCartPopover();
   resetBreathPlayer();
+  void trackEvent("breath_modal_opened");
   breathModalOverlay.classList.add("open");
   try {
     breathCloseBtn?.focus();
@@ -531,6 +550,9 @@ authForms.forEach((form) => {
         return;
       }
       saveAuth({ accessToken: json.accessToken, refreshToken: json.refreshToken, user: json.user });
+      void trackEvent(mode === "register" ? "auth_registered" : "auth_logged_in", {
+        email,
+      });
       setAuthStatus("Tamam.");
       await renderAuthState();
       await loadMoodHistory();
@@ -541,6 +563,7 @@ authForms.forEach((form) => {
 });
 
 authLogoutBtn?.addEventListener("click", () => {
+  void trackEvent("auth_logged_out");
   clearAuth();
   setAuthStatus("Çıkış yapıldı.");
   setAuthMe("Giriş yapılmadı.");
@@ -902,6 +925,11 @@ moodSaveBtn?.addEventListener("click", async () => {
       setMoodSaveStatus("Hata: kaydedilemedi.");
       return;
     }
+    void trackEvent("mood_saved", {
+      entryDate,
+      moodValue,
+      hasNote: !!String(note || "").trim(),
+    });
     setMoodSaveStatus("Kaydedildi.");
     await loadMoodHistory();
   } catch {
@@ -1072,6 +1100,7 @@ sleepSetBtn?.addEventListener("click", async () => {
       body: { timeHHMM: time, message, enabled: true },
       authRequired: true,
     });
+    void trackEvent("sleep_reminder_set", { timeHHMM: time });
   } catch {
     // ignore
   }
@@ -1087,6 +1116,7 @@ sleepCancelBtn?.addEventListener("click", async () => {
       body: { timeHHMM: time, message, enabled: false },
       authRequired: true,
     });
+    void trackEvent("sleep_reminder_disabled", { timeHHMM: time });
   } catch {
     // ignore
   }
@@ -1184,6 +1214,10 @@ async function saveSleepRoutine() {
       authRequired: true,
     });
     if (!res.ok) throw new Error("failed");
+    void trackEvent("sleep_routine_saved", {
+      title,
+      itemCount: items.length,
+    });
     setSleepRoutineStatus("Kaydedildi.");
     await loadSleepRoutine();
   } catch {
@@ -1236,6 +1270,11 @@ sleepRoutineListEl?.addEventListener("click", async (e) => {
           method: "PUT",
           body: { routineItemId: it.id, isDone: checked, checkinDate: sleepRoutineState.date },
           authRequired: true,
+        });
+        void trackEvent("sleep_item_checkin_updated", {
+          routineItemId: it.id,
+          isDone: checked,
+          checkinDate: sleepRoutineState.date,
         });
       } catch {
         // ignore
@@ -1740,7 +1779,10 @@ function applyNavCartQtyFromInputs() {
   });
   saveGaiaCart(next);
   syncNavCartBadges();
-  if (changed) showGaiaToast("Sepet güncellendi");
+  if (changed) {
+    void trackEvent("cart_updated", { totalQty: gaiaCartTotalQty(next) });
+    showGaiaToast("Sepet güncellendi");
+  }
   renderNavCartProductList();
 }
 
@@ -1834,6 +1876,7 @@ function renderNavCartProductList() {
       if (next[id] <= 0) delete next[id];
       saveGaiaCart(next);
       syncNavCartBadges();
+      void trackEvent("cart_item_decreased", { productId: id, qty: next[id] || 0 });
       renderNavCartProductList();
     });
   });
@@ -1847,6 +1890,7 @@ function renderNavCartProductList() {
       next[id] = q;
       saveGaiaCart(next);
       syncNavCartBadges();
+      void trackEvent("cart_item_increased", { productId: id, qty: q });
       renderNavCartProductList();
     });
   });
@@ -1859,6 +1903,7 @@ function renderNavCartProductList() {
       delete next[id];
       saveGaiaCart(next);
       syncNavCartBadges();
+      void trackEvent("cart_item_removed", { productId: id });
       showGaiaToast("Ürün sepetten kaldırıldı");
       renderNavCartProductList();
     });
@@ -1969,6 +2014,7 @@ storeGridEl?.addEventListener("click", (e) => {
     syncNavCartBadges();
     renderNavCartProductList();
     const label = shelfLabel(productCatalog[id]);
+    void trackEvent("cart_item_added", { source: "store_modal", productId: id, qty: next[id] });
     showGaiaToast(`${label} sepete eklendi`);
   }
 });
@@ -1978,6 +2024,7 @@ function openStoreModal() {
   closeNavCartPopover();
   closeMobileNav();
   renderStoreGrid();
+  void trackEvent("store_modal_opened");
   storeModalOverlay.classList.add("open");
 }
 
@@ -2067,6 +2114,7 @@ productModalOverlay?.addEventListener("click", (e) => {
   saveGaiaCart(next);
   syncNavCartBadges();
   renderNavCartProductList();
+  void trackEvent("cart_item_added", { source: "product_modal", productId: id, qty: next[id] });
   showGaiaToast(`${shelfLabel(productCatalog[id])} sepete eklendi`);
 });
 
@@ -2196,6 +2244,7 @@ async function sendChatMessage(text) {
   const msg = (text || "").trim();
   if (!msg) return;
   addChatMessage("user", msg);
+  void trackEvent("chat_message_sent", { source: "ui", length: msg.length });
   setChatStatus("Yanıt yazılıyor...");
   try {
     const res = await apiFetch("/chat", {
