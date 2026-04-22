@@ -1,0 +1,16 @@
+# Bağımlılıklar (kök + alt klasörler)
+node_modules/
+**/node_modules/
+
+# Backend
+backend/node_modules/
+backend/.env
+backend/data/
+
+*.sqlite
+*.sqlite3
+*.log
+
+# OS / editör
+.DS_Store
+Thumbs.db

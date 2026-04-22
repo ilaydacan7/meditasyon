@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gaia – Meditasyon ve Doğa Alanı</title>
+  <link rel="icon" type="image/png" href="gaia-logo.png.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Uçuşan duman / mist arka plan katmanları -->
+  <div class="smoke-bg" aria-hidden="true">
+    <div class="smoke smoke-1"></div>
+    <div class="smoke smoke-2"></div>
+    <div class="smoke smoke-3"></div>
+    <div class="smoke smoke-4"></div>
+    <div class="smoke smoke-5"></div>
+    <div class="smoke smoke-6"></div>
+    <div class="smoke smoke-7"></div>
+  </div>
+
+  <div class="home-landing" id="home">
+    <header class="topbar topbar-overlay">
+      <div class="topbar-inner topbar-inner--studio">
+        <button
+          type="button"
+          class="mobile-nav-toggle"
+          id="mobile-nav-toggle"
+          aria-expanded="false"
+          aria-controls="mobile-nav-drawer"
+          aria-label="Menüyü aç"
+        >
+          <span class="mobile-nav-toggle-bars" aria-hidden="true">
+            <span class="mobile-nav-toggle-bar"></span>
+            <span class="mobile-nav-toggle-bar"></span>
+            <span class="mobile-nav-toggle-bar"></span>
+          </span>
+        </button>
+
+        <a class="brand" href="#gaia-hero" aria-label="Gaia ana sayfa">
+          <img src="gaia-logo.png.png" alt="" class="brand-mark" />
+          <span class="brand-text">
+            <span class="brand-title">Gaia</span>
+            <span class="brand-subtitle">Meditasyon • Nefes • Uyku</span>
+          </span>
+        </a>
+
+        <nav class="nav nav-right nav-desktop" aria-label="Hesap">
+          <span class="nav-auth-cluster" aria-label="Hesap">
+            <a href="#" class="open-auth nav-auth-login" data-auth-modal-tab="login">GİRİŞ</a>
+            <a href="#" class="open-auth nav-auth-register" data-auth-modal-tab="register">Üye ol</a>
+            <div class="nav-cart-wrap">
+              <button
+                type="button"
+                class="nav-cart-btn"
+                id="nav-cart-toggle"
+                aria-expanded="false"
+                aria-controls="nav-cart-popover"
+                aria-label="Sepeti aç"
+              >
+                <svg class="nav-cart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+                <span class="nav-cart-badge" id="nav-cart-badge" aria-live="polite">0</span>
+              </button>
+            </div>
+          </span>
+        </nav>
+      </div>
+    </header>
+
+    <div
+      id="nav-cart-popover"
+      class="nav-cart-popover"
+      role="region"
+      aria-label="Sepet"
+      hidden
+    >
+      <p class="nav-cart-popover-title" id="nav-cart-popover-heading">Sepetin</p>
+      <p class="nav-cart-popover-sub" id="nav-cart-popover-sub">Sepetin boş. Mağazadan ürün ekleyebilirsin.</p>
+      <ul class="nav-cart-product-list" id="nav-cart-product-list"></ul>
+      <div class="nav-cart-checkout-block" id="nav-cart-checkout-block" hidden>
+        <div class="nav-cart-totals" id="nav-cart-totals"></div>
+        <div class="nav-cart-payment">
+          <p class="nav-cart-payment-title">Ödeme</p>
+          <p class="nav-cart-payment-note">
+            Güvenli ödeme altyapısı üzerinden ödeme adımı çok yakında burada olacak.
+          </p>
+          <button type="button" class="btn-nav-cart-pay" id="nav-cart-pay-btn" disabled>Ödemeye geç</button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mobile-nav-drawer"
+      id="mobile-nav-drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mobile-nav-title"
+      hidden
+    >
+      <div class="mobile-nav-panel">
+        <button type="button" class="mobile-nav-close" id="mobile-nav-close" aria-label="Menüyü kapat">×</button>
+        <p id="mobile-nav-title" class="visually-hidden">Site menüsü</p>
+        <nav class="mobile-nav-list" aria-label="Gaia menü">
+          <details class="mobile-nav-details" open>
+            <summary class="mobile-nav-summary">İçerikler</summary>
+            <ul class="mobile-nav-sub">
+              <li><a href="#icerik">Yoga</a></li>
+              <li><a href="#bak-baslama">Meditasyon</a></li>
+              <li><a href="#bak-baslama">Ritüel</a></li>
+              <li><a href="#" class="js-open-breath">Nefes</a></li>
+              <li><a href="#" class="js-open-store">Mağaza</a></li>
+            </ul>
+          </details>
+          <a class="mobile-nav-link" href="#yakinda-seri">Programlar</a>
+          <a class="mobile-nav-link" href="#bak-baslama">Keşfet</a>
+          <div class="mobile-nav-account-block" aria-label="Abonelik ve üyelik">
+            <a class="mobile-nav-link mobile-nav-link--stack open-subscription" href="#">Abonelik</a>
+            <a class="mobile-nav-link mobile-nav-link--stack open-auth" href="#" data-auth-modal-tab="register">Üye ol</a>
+            <div class="mobile-nav-cart-row">
+              <button
+                type="button"
+                class="nav-cart-btn nav-cart-btn--drawer"
+                id="nav-cart-toggle-mobile"
+                aria-expanded="false"
+                aria-controls="nav-cart-popover"
+                aria-label="Sepeti aç"
+              >
+                <svg class="nav-cart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="9" cy="21" r="1" />
+                  <circle cx="20" cy="21" r="1" />
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+                <span class="nav-cart-badge nav-cart-badge--drawer" id="nav-cart-badge-mobile" aria-live="polite">0</span>
+              </button>
+            </div>
+          </div>
+        </nav>
+        <div class="mobile-nav-footer">
+          <a href="#" class="open-auth mobile-nav-login-btn" data-auth-modal-tab="login">GİRİŞ</a>
+        </div>
+      </div>
+    </div>
+
+    <section class="hero hero-studio" id="gaia-hero">
+      <div class="hero-bg-photo hero-studio-bg" role="img" aria-hidden="true"></div>
+      <div class="hero-overlay hero-studio-overlay"></div>
+      <div class="hero-studio-content">
+        <p class="hero-studio-kicker">Gaia</p>
+        <h1 class="hero-studio-title">Kendine biraz zaman verirsen, her şey yumuşayabilir.</h1>
+        <p class="hero-studio-lead">Her gün kendine dön.</p>
+        <p class="hero-studio-sub">
+          Türkiye’nin sevilen online meditasyon ve nefes alanında zihnini sakinleştir, bedenini rahatlat.
+        </p>
+        <a href="#bak-baslama" class="hero-studio-cta">Şimdi başla</a>
+      </div>
+    </section>
+
+    <div class="cookie-strip" role="dialog" aria-label="Çerez bildirimi">
+      <p class="cookie-strip-text">Deneyimini iyileştirmek için çerezler kullanıyoruz.</p>
+      <button type="button" class="cookie-ok">Tamam</button>
+    </div>
+  </div>
+
+  <main id="icerik" class="page-main">
+    <section id="bak-baslama" class="section gaia-intro-wave" aria-labelledby="intro-baslik">
+      <h2 id="intro-baslik" class="gaia-intro-heading">Buraya gelmen bir başlangıç.</h2>
+      <p class="gaia-intro-lead">
+        Zihnin karışıksa, her şey üst üste geliyorsa veya yavaşlamaya ihtiyaç duyuyorsan doğru yerdesin.
+      </p>
+      <p class="gaia-intro-body">
+        Gaia; nefes, kısa meditasyon ve uyku öncesi ritüellerle kendinle yeniden buluşman için sakin bir alan.
+        Her şeyi bilmen gerekmez: küçük adımlarla ilerleyebilirsin.
+      </p>
+      <p class="gaia-intro-actions">
+        <button type="button" class="btn-secondary gaia-intro-breath-btn js-open-breath">Nefes videoları</button>
+      </p>
+    </section>
+
+    <section id="yakinda-seri" class="section gaia-teaser" aria-labelledby="teaser-baslik">
+      <h2 id="teaser-baslik" class="gaia-teaser-title">Ücretsiz başlangıç serisi</h2>
+      <p class="section-subtitle gaia-teaser-sub">
+        İlk rutinine başlaman için kısa bir yol — yakında tam içerik burada olacak. Şimdiden abonelik planlarını inceleyebilirsin.
+      </p>
+      <div class="gaia-teaser-actions">
+        <a href="#" class="open-subscription btn-secondary gaia-teaser-btn">Planları gör</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Meditasyon modalı -->
+  <div class="modal-overlay" id="meditation-modal">
+    <div class="modal">
+      <button class="modal-close" aria-label="Kapat">×</button>
+      <h3 class="modal-title">Meditasyon Başlıyor</h3>
+      <p class="modal-body">
+        Seçtiğin meditasyon için sakin bir yer bul,
+        telefonunu sessize al ve nefesine odaklan.
+      </p>
+      <button class="btn-secondary modal-ok">Hazırım</button>
+    </div>
+  </div>
+
+  <!-- Nefes: 6 ayrı kategori; her birinde yalnızca Başlat ile tek oynatıcı -->
+  <div class="modal-overlay" id="breath-modal" role="dialog" aria-modal="true" aria-labelledby="breath-modal-title">
+    <div id="breath-modal-inner" class="modal modal-breath">
+      <button type="button" class="modal-close breath-close" aria-label="Kapat">×</button>
+      <h3 id="breath-modal-title" class="modal-title">Nefes</h3>
+      <p class="modal-body breath-modal-lead">
+        Her kartta <strong>bilgi köşesi</strong> o pratiğin özünü anlatır. <strong>Başlat</strong> dersen ekran büyür, yalnızca seçtiğin video açılır.
+      </p>
+      <div class="breath-topics" id="breath-topics">
+        <article class="breath-topic" data-breath-topic="1">
+          <h4 class="breath-topic-title">Düzenli kalp ritmi</h4>
+          <p class="breath-topic-line">Eşit sürede yavaş alış ve veriş (ör. 5–5).</p>
+          <aside class="breath-topic-info" aria-label="Bu kategori hakkında bilgi">
+            <span class="breath-topic-info-label">Bilgi</span>
+            <p class="breath-topic-info-text">
+              Kalp atışı ile nefes ritmini yakınlaştırmaya yönelik yumuşak bir pratiktir. Acele etmeden, omuzları düşürerek
+              burundan devam etmek genelde daha konforludur. Baş dönmesi olursa dur ve normal nefese dön.
+            </p>
+          </aside>
+          <button
+            type="button"
+            class="btn-secondary breath-start-btn"
+            data-youtube="inpOk4Afpz8"
+            data-breath-title="Düzenli kalp ritmi"
+          >
+            Başlat
+          </button>
+        </article>
+        <article class="breath-topic" data-breath-topic="2">
+          <h4 class="breath-topic-title">Kutu nefesi</h4>
+          <p class="breath-topic-line">Al · tut · ver · bekle — dört eşit sayım.</p>
+          <aside class="breath-topic-info" aria-label="Bu kategori hakkında bilgi">
+            <span class="breath-topic-info-label">Bilgi</span>
+            <p class="breath-topic-info-text">
+              Dört eşit faz zihni tek ritme bağlar; çoğu kişi stres anında veya toplantı öncesi kullanır. Tutuşta göğsünü
+              şişirmeye gerek yok; hafif ve rahat kalmak yeterli. 4 sayısı fazlaysa 3’er sayıyla başlayabilirsin.
+            </p>
+          </aside>
+          <button
+            type="button"
+            class="btn-secondary breath-start-btn"
+            data-youtube="wp5PwuN9mo4"
+            data-breath-title="Kutu nefesi"
+          >
+            Başlat
+          </button>
+        </article>
+        <article class="breath-topic" data-breath-topic="3">
+          <h4 class="breath-topic-title">Rahatlama (4-7-8)</h4>
+          <p class="breath-topic-line">4 al, 7 tut, 8 yavaş ver.</p>
+          <aside class="breath-topic-info" aria-label="Bu kategori hakkında bilgi">
+            <span class="breath-topic-info-label">Bilgi</span>
+            <p class="breath-topic-info-text">
+              Verişi uzatmak sinir sistemini yatıştırmaya yardımcı olabilir. İlk seferlerde birkaç tur ile sınırlı kal;
+              baş dönmesi veya uyuşukluk hissedersen bırak. Burun tıkalıysa zorlamadan önce sağlık önerisine danış.
+            </p>
+          </aside>
+          <button
+            type="button"
+            class="btn-secondary breath-start-btn"
+            data-youtube="idOq8staHEg"
+            data-breath-title="Rahatlama (4-7-8)"
+          >
+            Başlat
+          </button>
+        </article>
+        <article class="breath-topic" data-breath-topic="4">
+          <h4 class="breath-topic-title">Uzun veriş</h4>
+          <p class="breath-topic-line">Kısa alış, verişi uzatarak sakinleşme.</p>
+          <aside class="breath-topic-info" aria-label="Bu kategori hakkında bilgi">
+            <span class="breath-topic-info-label">Bilgi</span>
+            <p class="breath-topic-info-text">
+              Parasempatik yanıtı desteklemek için veriş süresini alışa göre uzatmak yaygın bir yöntemdir. Dudakları hafif
+              büzerek veya dar ağızla yavaşlatmak kolaylaştırabilir. Kendi ritmin videodan farklı olabilir; kendine nazik ol.
+            </p>
+          </aside>
+          <button
+            type="button"
+            class="btn-secondary breath-start-btn"
+            data-youtube="tybOi4hjZFQ"
+            data-breath-title="Uzun veriş"
+          >
+            Başlat
+          </button>
+        </article>
+        <article class="breath-topic" data-breath-topic="5">
+          <h4 class="breath-topic-title">Diyafram (karın) nefesi</h4>
+          <p class="breath-topic-line">Nefesi karına indirip omuzları gevşetme.</p>
+          <aside class="breath-topic-info" aria-label="Bu kategori hakkında bilgi">
+            <span class="breath-topic-info-label">Bilgi</span>
+            <p class="breath-topic-info-text">
+              Elini hafifçe karnına koyup nefesle karının yükselip alçalmasını hissetmek yeterli bir başlangıçtır. Omuz ve
+              boyun kaslarını devreden çıkarmak nefesi daha verimli hissettirir. Oturarak veya sırt üstü deneyebilirsin.
+            </p>
+          </aside>
+          <button
+            type="button"
+            class="btn-secondary breath-start-btn"
+            data-youtube="DbcYS7Tg65M"
+            data-breath-title="Diyafram (karın) nefesi"
+          >
+            Başlat
+          </button>
+        </article>
+        <article class="breath-topic" data-breath-topic="6">
+          <h4 class="breath-topic-title">Uyku öncesi yumuşak nefes</h4>
+          <p class="breath-topic-line">Günü bırakmak için yavaş tempolu rehber.</p>
+          <aside class="breath-topic-info" aria-label="Bu kategori hakkında bilgi">
+            <span class="breath-topic-info-label">Bilgi</span>
+            <p class="breath-topic-info-text">
+              Yatmadan önce ekranı azaltıp loş ışıkta birkaç dakika yavaş nefes, uyku geçişini destekleyebilir. Günün
+              düşüncelerini zorlamadan bırakmaya izin ver; uyumazsan da sorun değil, tekrar denemek yeterli.
+            </p>
+          </aside>
+          <button
+            type="button"
+            class="btn-secondary breath-start-btn"
+            data-youtube="gz4G31fc5Ss"
+            data-breath-title="Uyku öncesi yumuşak nefes"
+          >
+            Başlat
+          </button>
+        </article>
+      </div>
+      <div id="breath-player" class="breath-player" hidden>
+        <div class="breath-player-toolbar">
+          <button type="button" class="btn-secondary breath-shrink-btn" id="breath-shrink-btn" hidden>Küçült</button>
+        </div>
+        <p class="breath-player-kicker">Şu an</p>
+        <h4 id="breath-player-title" class="breath-player-title"></h4>
+        <p id="breath-player-summary" class="breath-player-summary" hidden></p>
+        <div class="breath-video-wrap">
+          <iframe
+            id="breath-active-iframe"
+            title="Seçilen nefes pratiği"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </div>
+        <button type="button" class="btn-secondary breath-player-clear" id="breath-player-clear">Videoyu kapat</button>
+      </div>
+      <button type="button" class="btn-secondary breath-modal-ok">Kapat</button>
+    </div>
+  </div>
+
+  <!-- Paket modalı -->
+  <div class="modal-overlay" id="package-modal">
+    <div class="modal">
+      <button class="modal-close package-close" aria-label="Kapat">×</button>
+      <h3 class="modal-title package-title">Paket</h3>
+      <div class="modal-body package-body"></div>
+      <button class="btn-secondary modal-ok package-ok">Tamam</button>
+    </div>
+  </div>
+
+  <!-- Abonelik modalı -->
+  <div class="modal-overlay" id="subscription-modal">
+    <div class="modal modal-large">
+      <button class="modal-close subscription-close" aria-label="Kapat">×</button>
+      <h3 class="modal-title">Gaia Abonelikleri</h3>
+      <p class="modal-body subscription-note">
+        Tüm planlarda <strong>ilk 7 gün ücretsiz</strong>. İstediğin zaman iptal edebilirsin; kartına ilk 7 günden sonra ücret yansır.
+      </p>
+
+      <div class="subscription-body">
+        <div class="pricing-grid">
+          <article class="pricing-card">
+            <div class="pricing-badge">Eko Paket</div>
+            <h3>Gaia Eko</h3>
+            <p class="pricing-price">₺29 / ay</p>
+            <ul class="pricing-list">
+              <li>Kısa meditasyonlar</li>
+              <li>Basit nefes egzersizleri</li>
+              <li>Reklamlı deneyim</li>
+            </ul>
+            <button class="btn-secondary subscribe-btn">7 Gün Ücretsiz Dene</button>
+          </article>
+
+          <article class="pricing-card">
+            <div class="pricing-badge">Yeni Başlayan</div>
+            <h3>Gaia Hafif</h3>
+            <p class="pricing-price">₺39 / ay</p>
+            <ul class="pricing-list">
+              <li>Temel meditasyon arşivi</li>
+              <li>Günlük mod takibi</li>
+              <li>1 cihazdan erişim</li>
+            </ul>
+            <button class="btn-secondary subscribe-btn">7 Gün Ücretsiz Dene</button>
+          </article>
+
+          <article class="pricing-card">
+            <div class="pricing-badge badge-popular">Sık Kullanılan</div>
+            <h3>Gaia Denge</h3>
+            <p class="pricing-price">₺69 / ay</p>
+            <ul class="pricing-list">
+              <li>Tüm meditasyonlar + nefes videoları</li>
+              <li>Haftalık hatırlatmalar</li>
+              <li>2 cihazdan erişim</li>
+            </ul>
+            <button class="btn-secondary subscribe-btn">7 Gün Ücretsiz Dene</button>
+          </article>
+
+          <article class="pricing-card">
+            <div class="pricing-badge">Derin Çalışma</div>
+            <h3>Gaia Derin</h3>
+            <p class="pricing-price">₺99 / ay</p>
+            <ul class="pricing-list">
+              <li>Gece ritüelleri ve uyku listeleri</li>
+              <li>Aylık mini yoga serileri</li>
+              <li>3 cihazdan erişim</li>
+            </ul>
+            <button class="btn-secondary subscribe-btn">7 Gün Ücretsiz Dene</button>
+          </article>
+        </div>
+      </div>
+
+      <button class="btn-secondary modal-ok subscription-ok">Tamam</button>
+    </div>
+  </div>
+
+  <!-- Mağaza (ana sayfada görünmez; Mağaza / menüden açılır) -->
+  <div class="modal-overlay" id="store-modal">
+    <div class="modal modal-store">
+      <button type="button" class="modal-close store-close" aria-label="Kapat">×</button>
+      <h3 class="modal-title store-modal-title">Gaia Mağaza</h3>
+      <p class="modal-body store-modal-lead">
+        Önce editör seçkisi, ardından kategorilere göre düzenlendi. Sepete ekleyebilir veya ürünü inceleyebilirsin.
+      </p>
+      <p class="store-modal-shipping" role="note">
+        <strong>1.000 TL</strong> ve üzeri siparişlerde <strong>kargo bedava</strong>. Altında sabit kargo:
+        <strong>59,90 TL</strong>.
+      </p>
+      <div class="store-catalog" id="store-grid"></div>
+      <div class="store-modal-actions">
+        <button type="button" class="btn-secondary" id="store-open-cart-btn">Sepete bak</button>
+        <button type="button" class="btn-secondary modal-ok store-ok">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ürün modalı -->
+  <div class="modal-overlay" id="product-modal">
+    <div class="modal modal-large">
+      <button class="modal-close product-close" aria-label="Kapat">×</button>
+      <h3 class="modal-title product-title">Ürün</h3>
+      <p class="modal-body product-subtitle"></p>
+      <div class="product-body"></div>
+      <button class="btn-secondary modal-ok product-ok">Tamam</button>
+    </div>
+  </div>
+
+  <!-- Giriş / kayıt modalı -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <button class="modal-close auth-close" aria-label="Kapat">×</button>
+      <h3 class="modal-title">Hesap</h3>
+      <p class="modal-body" style="margin-bottom: 10px">
+        Mod geçmişin ve uyku rutinin cihazlar arasında senkronlansın.
+      </p>
+
+      <div class="auth-tabs" role="tablist" aria-label="Hesap sekmeleri">
+        <button type="button" class="auth-tab active" data-auth-tab="login">GİRİŞ</button>
+        <button type="button" class="auth-tab" data-auth-tab="register">Kayıt ol</button>
+      </div>
+
+      <form class="auth-form" data-auth-form="login">
+        <label class="auth-field">
+          <span>E-posta</span>
+          <input type="email" class="auth-email" autocomplete="email" required />
+        </label>
+        <label class="auth-field">
+          <span>Şifre</span>
+          <input type="password" class="auth-password" autocomplete="current-password" required />
+        </label>
+        <button type="submit" class="btn-secondary">Giriş yap</button>
+      </form>
+
+      <form class="auth-form hidden" data-auth-form="register">
+        <label class="auth-field">
+          <span>E-posta</span>
+          <input type="email" class="auth-email" autocomplete="email" required />
+        </label>
+        <label class="auth-field">
+          <span>Şifre (min 6)</span>
+          <input type="password" class="auth-password" autocomplete="new-password" minlength="6" required />
+        </label>
+        <button type="submit" class="btn-secondary">Hesap oluştur</button>
+      </form>
+
+      <div class="auth-status" aria-live="polite"></div>
+      <div class="auth-me" aria-live="polite"></div>
+      <div class="auth-actions">
+        <button type="button" class="btn-secondary btn-ghost auth-logout-btn">Çıkış</button>
+        <button type="button" class="btn-secondary auth-ok">Tamam</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
