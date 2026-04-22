@@ -16,32 +16,32 @@ function nowMs() {
   return Date.now();
 }
 
-moodsRouter.post("/", requireAuth, (req, res) => {
+moodsRouter.post("/", requireAuth, async (req, res) => {
   const parsed = MoodCreateSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: "invalid_body", details: parsed.error.flatten() });
 
   const { entryDate, moodValue, note } = parsed.data;
   const db = getDb();
-  const existing = db
+  const existing = await db
     .prepare("SELECT id FROM mood_entries WHERE user_id = ? AND entry_date = ?")
     .get(req.user.id, entryDate);
 
   if (existing) {
-    db.prepare(
+    await db.prepare(
       "UPDATE mood_entries SET mood_value = ?, note = ? WHERE id = ?"
     ).run(moodValue, note ?? null, existing.id);
     return res.json({ ok: true, id: existing.id, entryDate, moodValue, note: note ?? null });
   }
 
   const id = newId();
-  db.prepare(
+  await db.prepare(
     "INSERT INTO mood_entries (id, user_id, entry_date, mood_value, note, created_at) VALUES (?, ?, ?, ?, ?, ?)"
   ).run(id, req.user.id, entryDate, moodValue, note ?? null, nowMs());
 
   return res.json({ ok: true, id, entryDate, moodValue, note: note ?? null });
 });
 
-moodsRouter.get("/", requireAuth, (req, res) => {
+moodsRouter.get("/", requireAuth, async (req, res) => {
   const QuerySchema = z.object({
     from: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
@@ -67,7 +67,7 @@ moodsRouter.get("/", requireAuth, (req, res) => {
   }
   sql += " ORDER BY entry_date DESC";
 
-  const rows = db.prepare(sql).all(...params);
+  const rows = await db.prepare(sql).all(...params);
   return res.json({ items: rows });
 });
 

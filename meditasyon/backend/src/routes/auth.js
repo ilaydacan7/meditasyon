@@ -27,13 +27,13 @@ function tokensResponse(user) {
   return { accessToken, refreshToken };
 }
 
-function storeRefreshToken(db, { userId, refreshToken }) {
+async function storeRefreshToken(db, { userId, refreshToken }) {
   const payload = verifyRefreshToken(refreshToken); // also validates signature
   const expiresAt = typeof payload.exp === "number" ? payload.exp * 1000 : nowMs() + 30 * 864e5;
   const id = newId();
   const tokenHash = sha256Base64(refreshToken);
 
-  db.prepare(
+  await db.prepare(
     `INSERT INTO refresh_tokens (id, user_id, token_hash, created_at, expires_at, revoked_at)
      VALUES (?, ?, ?, ?, ?, NULL)`
   ).run(id, userId, tokenHash, nowMs(), expiresAt);
@@ -41,47 +41,47 @@ function storeRefreshToken(db, { userId, refreshToken }) {
   return { id, expiresAt };
 }
 
-authRouter.post("/register", (req, res) => {
+authRouter.post("/register", async (req, res) => {
   const parsed = EmailPasswordSchema.safeParse(req.body);
   if (!parsed.success) return jsonError(res, 400, "invalid_body", parsed.error.flatten());
 
   const { email, password } = parsed.data;
   const db = getDb();
 
-  const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(email);
+  const existing = await db.prepare("SELECT id FROM users WHERE email = ?").get(email);
   if (existing) return jsonError(res, 409, "email_in_use");
 
   const id = newId();
   const passwordHash = bcrypt.hashSync(password, 10);
-  db.prepare("INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)")
+  await db.prepare("INSERT INTO users (id, email, password_hash, created_at) VALUES (?, ?, ?, ?)")
     .run(id, email, passwordHash, nowMs());
 
   const tokens = tokensResponse({ id, email });
-  storeRefreshToken(db, { userId: id, refreshToken: tokens.refreshToken });
+  await storeRefreshToken(db, { userId: id, refreshToken: tokens.refreshToken });
 
   return res.json({ user: { id, email }, ...tokens });
 });
 
-authRouter.post("/login", (req, res) => {
+authRouter.post("/login", async (req, res) => {
   const parsed = EmailPasswordSchema.safeParse(req.body);
   if (!parsed.success) return jsonError(res, 400, "invalid_body", parsed.error.flatten());
 
   const { email, password } = parsed.data;
   const db = getDb();
 
-  const user = db.prepare("SELECT id, email, password_hash FROM users WHERE email = ?").get(email);
+  const user = await db.prepare("SELECT id, email, password_hash FROM users WHERE email = ?").get(email);
   if (!user) return jsonError(res, 401, "invalid_credentials");
 
   const ok = bcrypt.compareSync(password, user.password_hash);
   if (!ok) return jsonError(res, 401, "invalid_credentials");
 
   const tokens = tokensResponse({ id: user.id, email: user.email });
-  storeRefreshToken(db, { userId: user.id, refreshToken: tokens.refreshToken });
+  await storeRefreshToken(db, { userId: user.id, refreshToken: tokens.refreshToken });
 
   return res.json({ user: { id: user.id, email: user.email }, ...tokens });
 });
 
-authRouter.post("/refresh", (req, res) => {
+authRouter.post("/refresh", async (req, res) => {
   const BodySchema = z.object({ refreshToken: z.string().min(10) });
   const parsed = BodySchema.safeParse(req.body);
   if (!parsed.success) return jsonError(res, 400, "invalid_body", parsed.error.flatten());
@@ -96,7 +96,7 @@ authRouter.post("/refresh", (req, res) => {
 
   const db = getDb();
   const tokenHash = sha256Base64(refreshToken);
-  const row = db
+  const row = await db
     .prepare(
       `SELECT id, user_id, expires_at, revoked_at
        FROM refresh_tokens
@@ -107,13 +107,13 @@ authRouter.post("/refresh", (req, res) => {
   if (!row || row.revoked_at) return jsonError(res, 401, "invalid_refresh");
   if (typeof row.expires_at === "number" && row.expires_at <= nowMs()) return jsonError(res, 401, "refresh_expired");
 
-  const user = db.prepare("SELECT id, email FROM users WHERE id = ?").get(row.user_id);
+  const user = await db.prepare("SELECT id, email FROM users WHERE id = ?").get(row.user_id);
   if (!user) return jsonError(res, 401, "invalid_refresh");
 
   // rotate
-  db.prepare("UPDATE refresh_tokens SET revoked_at = ? WHERE id = ?").run(nowMs(), row.id);
+  await db.prepare("UPDATE refresh_tokens SET revoked_at = ? WHERE id = ?").run(nowMs(), row.id);
   const tokens = tokensResponse({ id: user.id, email: user.email });
-  storeRefreshToken(db, { userId: user.id, refreshToken: tokens.refreshToken });
+  await storeRefreshToken(db, { userId: user.id, refreshToken: tokens.refreshToken });
 
   return res.json({ user: { id: user.id, email: user.email }, ...tokens });
 });
